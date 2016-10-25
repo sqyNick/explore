@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:padding="6dp"
+        android:layout_gravity="center"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@mipmap/user" />
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:paddingLeft="10dp"
+        android:layout_gravity="center"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="48dp"
+        />
+    <TextView
+        android:id="@+id/tv_progress"
+        android:layout_gravity="center"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="0%"
+        />
+    <TextView
+        android:id="@+id/tv_cancle"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:gravity="center"
+        android:text="取消"
+        />
+</LinearLayout>

@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">ExploreMap</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
+
+    <string name="xlistview_header_hint_normal">下拉刷新</string>
+    <string name="xlistview_header_hint_ready">松开刷新数据</string>
+    <string name="xlistview_header_hint_loading">正在加载...</string>
+    <string name="xlistview_header_last_time">上次更新时间：</string>
+    <string name="xlistview_footer_hint_normal">查看更多</string>
+    <string name="xlistview_footer_hint_ready">松开载入更多</string>
+
+    <string name="cancle">取消</string>
+    <string name="login">登录</string>
+    <string name="show">显示</string>
+    <string name="submit">提交</string>
+    <string name="delete">删除</string>
+
+    <string name="submited">已提交</string>
+    <string name="unsubmit">未提交</string>
+
+
+</resources>

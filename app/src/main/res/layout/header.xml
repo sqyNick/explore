@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:background="@color/colorAccent"
+    android:layout_height="48dp">
+
+    <ImageView
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@mipmap/back_32"
+        android:padding="12dp"
+        android:id="@+id/img_back" />
+
+    <TextView
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:text="监控点信息"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        />
+
+    <TextView
+        android:id="@+id/tv_tg_btn"
+        android:layout_width="96dp"
+        android:layout_height="48dp"
+        android:textColor="#fff"
+        android:textSize="16sp"
+        android:text="初堪"
+        android:gravity="center"
+        android:background="@color/blue"
+        />
+
+</LinearLayout>

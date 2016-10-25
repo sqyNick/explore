@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+    <!-- Bottom View Start-->
+    <LinearLayout
+        android:id="@+id/bottom_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="#fff"
+        android:orientation="horizontal"
+        >
+        <!--What you want to show-->
+
+        <ImageView
+            android:id="@+id/item_img_show"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@mipmap/icon_show"
+             />
+
+        <ImageView
+            android:id="@+id/item_img_submit"
+            android:src="@mipmap/icon_submit"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+             />
+
+        <ImageView
+            android:id="@+id/item_img_delete"
+            android:src="@mipmap/icon_delete"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+             />
+    </LinearLayout>
+    <!-- Bottom View End-->
+
+    <!-- Surface View Start -->
+    <LinearLayout
+        android:id="@+id/linear_surface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:orientation="vertical"
+        >
+        <!--What you want to show in SurfaceView-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2">
+            <TextView
+                android:paddingLeft="5dp"
+                android:text="光谷广场一号杆"
+                android:id="@+id/item_tv_p_name"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                 />
+            <TextView
+                android:text="编号：DB8008"
+                android:id="@+id/item_tv_p_num"
+                android:textSize="14sp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2">
+            <TextView
+                android:paddingLeft="5dp"
+                android:id="@+id/item_tv_p_camera_type"
+                android:text="摄像机类型"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:text="安装方式"
+                android:id="@+id/item_tv_p_install_method"
+                android:textSize="14sp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2">
+            <TextView
+                android:paddingLeft="5dp"
+                android:text="地区"
+                android:id="@+id/item_tv_p_area"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                />
+            <TextView
+                android:text="杆高"
+                android:id="@+id/item_tv_p_height"
+                android:textSize="14sp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <!-- Surface View End -->
+</com.daimajia.swipe.SwipeLayout>

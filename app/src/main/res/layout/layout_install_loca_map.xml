@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/login_linear_layout_shape"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="安装地点图:"
+            android:textColor="@color/lightBlue"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/img_install_capture_content"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+             />
+        <ImageView
+            android:id="@+id/img_install_capture"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/camera_32"
+            android:padding="12dp"
+            />
+    </LinearLayout>
+</LinearLayout>

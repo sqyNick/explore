@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@color/grayBackground"
+        android:gravity="center">
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/profile_image"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@mipmap/user"
+            app:civ_border_color="#FFffffff"
+            app:civ_border_width="1dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/submit_all_saved_points"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/login_linear_layout_shape"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:layout_width="200dp"
+            android:layout_height="48dp"
+            android:textColor="#858585"
+            android:textSize="16sp"
+            android:text="一键提交暂存点位"
+            />
+        </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:weightSum="3"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tv_add_explore_point"
+        android:layout_width="0dp"
+        android:layout_height="48dip"
+        android:gravity="center"
+        android:text="勘点录入"
+        android:textSize="18sp"
+        android:background="@color/blue"
+        android:textColor="@color/white"
+        android:layout_weight="1"
+        />
+    <TextView
+        android:id="@+id/tv_search_point"
+        android:textSize="18sp"
+        android:textColor="@color/textColor"
+        android:layout_width="0dp"
+        android:layout_height="48dip"
+        android:gravity="center"
+        android:text="数据查询"
+        android:layout_weight="1"
+        />
+    <TextView
+        android:id="@+id/tv_display_point"
+        android:textSize="18sp"
+        android:textColor="@color/textColor"
+        android:layout_width="0dp"
+        android:layout_height="48dip"
+        android:gravity="center"
+        android:text="点位展示"
+        android:layout_weight="1"
+        />
+
+</LinearLayout>
