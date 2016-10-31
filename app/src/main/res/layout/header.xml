@@ -7,8 +7,8 @@
     <ImageView
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@mipmap/back_32"
-        android:padding="12dp"
+        android:src="@mipmap/backto"
+        android:padding="2dp"
         android:id="@+id/img_back" />
 
     <TextView
@@ -27,7 +27,7 @@
         android:layout_height="48dp"
         android:textColor="#fff"
         android:textSize="16sp"
-        android:text="初堪"
+        android:text="初勘"
         android:gravity="center"
         android:background="@color/blue"
         />

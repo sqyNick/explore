@@ -73,6 +73,9 @@ public class ExplorePoint implements Parcelable {
     @Column(column = "is_submite")
     public int is_submite;
 
+    @Column(column = "submit_person")
+    public String submit_person;
+
     public ExplorePoint(){
 
     }
@@ -102,6 +105,7 @@ public class ExplorePoint implements Parcelable {
         lat = source.readDouble();
         lon = source.readDouble();
         is_submite = source.readInt();
+        submit_person = source.readString();
     }
     @Override
     public int describeContents() {
@@ -135,6 +139,7 @@ public class ExplorePoint implements Parcelable {
         parcel.writeDouble(lat);
         parcel.writeDouble(lon);
         parcel.writeInt(is_submite);
+        parcel.writeString(submit_person);
     }
     public static Parcelable.Creator<ExplorePoint> CREATOR
             = new Parcelable.Creator<ExplorePoint>()

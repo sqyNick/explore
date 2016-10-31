@@ -31,6 +31,8 @@ import com.fhzz.cn.exploremap.adapter.PopWindowListviewAdapter;
 import com.fhzz.cn.exploremap.entity.ResultCodeResp;
 import com.fhzz.cn.exploremap.util.LogUtil;
 import com.fhzz.cn.exploremap.util.SPUtil;
+import com.fhzz.cn.exploremap.util.ToastUtil;
+import com.fhzz.cn.exploremap.value.BaseInfo;
 import com.fhzz.cn.exploremap.value.PointParams;
 import com.fhzz.cn.exploremap.value.StaticValues;
 import com.google.gson.Gson;
@@ -47,8 +49,8 @@ import okhttp3.Call;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    @ViewInject(R.id.et_phone_number)
-    EditText et_phone_number;
+    @ViewInject(R.id.et_user_name)
+    EditText et_user_name;
     @ViewInject(R.id.img_delete)
     ImageView img_delete;
     @ViewInject(R.id.img_drop_more)
@@ -80,7 +82,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         img_delete.setOnClickListener(this);
         img_drop_more.setOnClickListener(this);
         btn_login.setOnClickListener(this);
-        et_phone_number.addTextChangedListener(new TextWatcher() {
+        et_user_name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -108,15 +110,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.img_delete:
-                et_phone_number.setText(StaticValues.EMPTY_VALUE);
+                et_user_name.setText(StaticValues.EMPTY_VALUE);
                 break;
             case R.id.img_drop_more:
                 if(show_drop){
                     show_drop = false;
-                    img_drop_more.setImageResource(R.mipmap.up_32);
+                    img_drop_more.setImageResource(R.mipmap.jiantou_up);
                     showPopWindow(login_linear_layout);
                 }else{
-                    img_drop_more.setImageResource(R.mipmap.drop_down_32);
+                    img_drop_more.setImageResource(R.mipmap.jiantou);
                     show_drop = true;
                     if(popupWindow.isShowing()){
                         popupWindow.dismiss();
@@ -124,13 +126,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.btn_login:
-                String phone = et_phone_number.getText().toString().trim();
+                String userName = et_user_name.getText().toString().trim();
                 String psd = et_psd.getText().toString().trim();
-                if(!TextUtils.isEmpty(phone) && !TextUtils.isEmpty(psd)){
+                if(!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(psd)){
                     showDialog();
-                    LogRequest(phone,psd);
+                    LogRequest(userName,psd);
                 }else{
-                    Toast.makeText(getBaseContext(),"信息填写不完整",Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getBaseContext(),"信息填写不完整");
                 }
                 break;
         }
@@ -140,7 +142,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         View root = LayoutInflater.from(this).inflate(R.layout.login_pop_window,null);
         ListView listView = (ListView) root.findViewById(R.id.login_listview);
         final ArrayList<String> lists = new ArrayList<>();
-        String spLoginedPhone = SPUtil.getString(this,StaticValues.LOGINED_PHONE);
+        String spLoginedPhone = SPUtil.getString(this,StaticValues.LOGINED_USER);
         if(TextUtils.isEmpty(spLoginedPhone)){
         }else{
             if(spLoginedPhone.contains(StaticValues.SPLIT)){
@@ -152,13 +154,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 lists.add(spLoginedPhone);
             }
         }
-        PopWindowListviewAdapter adapter = new PopWindowListviewAdapter(lists,this,et_phone_number.getText().toString().trim());
+        PopWindowListviewAdapter adapter = new PopWindowListviewAdapter(lists,this,et_user_name.getText().toString().trim());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 popupWindow.dismiss();
-                et_phone_number.setText(lists.get(i));
+                et_user_name.setText(lists.get(i));
             }
         });
         popupWindow = new PopupWindow(root, viewGroup.getWidth(), LinearLayout.LayoutParams.WRAP_CONTENT,true);
@@ -171,10 +173,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onDismiss() {
                 if(show_drop){
                     show_drop = false;
-                    img_drop_more.setImageResource(R.mipmap.up_32);
+                    img_drop_more.setImageResource(R.mipmap.jiantou_up);
                     showPopWindow(login_linear_layout);
                 }else{
-                    img_drop_more.setImageResource(R.mipmap.drop_down_32);
+                    img_drop_more.setImageResource(R.mipmap.jiantou);
                     show_drop = true;
                     if(popupWindow.isShowing()){
                         popupWindow.dismiss();
@@ -194,19 +196,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    public void LogRequest(final String phone,final String psd){
+    public void LogRequest(final String userName,final String psd){
         String url = StaticValues.ACTION_LOGIN;
         OkHttpUtils
                 .get()
                 .url(url)
-                .addParams(PointParams.PHONE, phone)
+                .addParams(PointParams.USER_NAME, userName)
                 .addParams(PointParams.PSD,psd)
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         e.printStackTrace();
-                        Toast.makeText(getBaseContext(),"服务器异常",Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getBaseContext(),"服务器异常");
                         progressDialog.dismiss();
                     }
 
@@ -216,15 +218,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         progressDialog.dismiss();
                         if(resp.code == 1000){
                             startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                            SPUtil.putLoginedPhone(getBaseContext(),phone);
-                            SPUtil.put(getBaseContext(),StaticValues.LAST_LOGINED_PHONE,phone);
-                            SPUtil.put(getBaseContext(),StaticValues.NOW_LOGIN_PHONE,phone);
+                            SPUtil.putLoginedPhone(getBaseContext(),userName);
+                            SPUtil.put(getBaseContext(),StaticValues.LAST_LOGINED_USER,userName);
+                            SPUtil.put(getBaseContext(),StaticValues.NOW_LOGIN_USER,userName);
                             SPUtil.put(getBaseContext(),StaticValues.LAST_LOGINED_PSD,psd);
+                            BaseInfo.USER_ID = resp.message;
                             LoginActivity.this.finish();
                         }else if(resp.code == 1005){
-                            Toast.makeText(getBaseContext(),"用户未授权",Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(getBaseContext(),"用户未授权");
                         }else if(resp.code == 1006){
-                            Toast.makeText(getBaseContext(),"密码错误",Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(getBaseContext(),"密码错误");
                         }
                     }
                 });

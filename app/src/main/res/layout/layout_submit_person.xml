@@ -3,7 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
-        android:id="@+id/linear_arm_length"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/login_linear_layout_shape"
@@ -14,23 +13,17 @@
             android:gravity="center_vertical"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:text="横臂长度:"
+            android:text="勘测人:"
             android:textColor="@color/lightBlue"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/tv_arm_length_content"
+        <EditText
+            android:id="@+id/et_submit_person"
+            android:background="@drawable/search_edittext_style"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="48dp"
-            android:gravity="center_vertical"
             android:textSize="15sp" />
-        <ImageView
-            android:visibility="invisible"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@mipmap/drop_down_32"
-            android:padding="12dp"
-            />
+
     </LinearLayout>
 </LinearLayout>

@@ -1,7 +1,6 @@
 package com.fhzz.cn.exploremap.activity;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,12 +12,11 @@ import android.os.Environment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
@@ -30,9 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RemoteViews;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -59,9 +55,10 @@ import com.fhzz.cn.exploremap.dbbean.ExplorePoint;
 import com.fhzz.cn.exploremap.entity.QueryPointResp;
 import com.fhzz.cn.exploremap.service.SubmitPointsService;
 import com.fhzz.cn.exploremap.util.DBUtil;
-import com.fhzz.cn.exploremap.util.LogUtil;
 import com.fhzz.cn.exploremap.util.SPUtil;
+import com.fhzz.cn.exploremap.util.ToastUtil;
 import com.fhzz.cn.exploremap.util.dpUtil;
+import com.fhzz.cn.exploremap.value.BaseInfo;
 import com.fhzz.cn.exploremap.value.ListDate;
 import com.fhzz.cn.exploremap.value.PointParams;
 import com.fhzz.cn.exploremap.value.StaticValues;
@@ -111,9 +108,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @ViewInject(R.id.linear)
     LinearLayout linear;
+    @ViewInject(R.id.tv_search_condition)
+    TextView tv_search_condition;
+
+    @ViewInject(R.id.et_search_content)
+    EditText et_search_content;
 
     @ViewInject(R.id.submit_all_saved_points)
     LinearLayout submit_all_saved_points;
+    @ViewInject(R.id.btn_switch_user)
+    Button btn_switch_user;
     /**
      * 默认进入时操作页面
      * 1  勘点录入
@@ -169,11 +173,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     lon = aMapLocation.getLongitude();
                     LatLng latLng = new LatLng(lat,lon);
                     addCameraMarker(MARKER_TYPE,latLng);
-                    Toast.makeText(getBaseContext(),"定位成功 ："+aMapLocation.getCity() + ":"+aMapLocation.getStreet(),Toast.LENGTH_SHORT).show();;
+                    ToastUtil.show(getBaseContext(),"定位成功 ："+aMapLocation.getCity() + ":"+aMapLocation.getStreet());
                     aMapLocationClient.stopLocation();
                     hideLocationDialog();
                 }else{
-                    Toast.makeText(getBaseContext(),"定位失败 ："+aMapLocation.getErrorCode() + ":"+aMapLocation.getErrorInfo(),Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getBaseContext(),"定位失败 ："+aMapLocation.getErrorCode() + ":"+aMapLocation.getErrorInfo());
                     hideLocationDialog();
                 }
             }
@@ -239,13 +243,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         queryPoint(String.valueOf(centerLatlng.latitude),String.valueOf(centerLatlng.longitude),
                                 String.valueOf(leftTop.latitude),String.valueOf(leftTop.longitude),
                                 String.valueOf(rightBottom.latitude),String.valueOf(rightBottom.longitude));
-                        LogUtil.d("MAP",""+leftTop.latitude+" , "+leftTop.longitude);
-                        LogUtil.d("MAP",""+rightBottom.latitude+" , "+rightBottom.longitude);
                     } else {
-                        Toast.makeText(getBaseContext(),"no result "+ i,Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getBaseContext(),"no result "+ i);
                     }
                 } else {
-                    Toast.makeText(getBaseContext(),"error "+ i,Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getBaseContext(),"error "+ i);
                 }
             }
         });
@@ -272,9 +274,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         img_search_icon.setOnClickListener(this);
         submit_all_saved_points.setOnClickListener(this);
         tv_search_input.setOnClickListener(this);
+        tv_search_condition.setOnClickListener(this);
+        btn_switch_user.setOnClickListener(this);
     }
     public void initDB(){
-        DBUtil.init(this, SPUtil.getString(this, StaticValues.NOW_LOGIN_PHONE));
+        DBUtil.init(this, SPUtil.getString(this, StaticValues.NOW_LOGIN_USER));
     }
     private void initView(){
         initAddExplorePointFAB();
@@ -312,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 public void onMapScreenShot(Bitmap bitmap, int i) {
                                     if(bitmap == null){
                                         progressDialog.dismiss();
-                                        Toast.makeText(getBaseContext(),"bitmap null",Toast.LENGTH_SHORT).show();
+                                        ToastUtil.show(getBaseContext(),"获取地图失败");
                                         return;
                                     }else{
                                         Intent it = new Intent(MainActivity.this,InitPointInfoActivity.class);
@@ -381,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (Environment.MEDIA_UNMOUNTED.equals(sdStatus)) {
 
         }
-        File dbTopDirDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + StaticValues.APP_DIRECTORY + "/" + SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE) + "/map");
+        File dbTopDirDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + StaticValues.APP_DIRECTORY + "/" + SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_USER) + "/map");
         if (!dbTopDirDir.exists()) {
             dbTopDirDir.mkdirs();
         }
@@ -461,6 +465,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     aMapLocationClient.startLocation();
                 }
+                actionMenu.close(true);
             }
         });
 
@@ -482,6 +487,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }else{
                     aMapLocationClient.startLocation();
                 }
+                actionMenu.close(true);
             }
         });
         actionMenu = new FloatingActionMenu.Builder(this)
@@ -621,15 +627,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 drawerLayout.openDrawer(Gravity.LEFT);
                 break;
             case R.id.img_search_icon:
-                String searchContent = tv_search_input.getText().toString().trim();
                 MAP_MARKER_STATUE = StaticValues.SEARCHED_MARKER;
-                if(TextUtils.isEmpty(searchContent)){
-                    /**查询条件为空，则查询所有*/
-                    queryPoint(null,null,null,null,null,null);
-                }else{
-//                    initGeoSearch(searchContent);
-                    queryPointByArea(searchContent);
+                String searchCondition = tv_search_condition.getText().toString().trim();
+                if("区域".equals(searchCondition)){
+                    String searchContent = tv_search_input.getText().toString().trim();
+                    if(TextUtils.isEmpty(searchContent)){
+                        queryPoint(null,null,null,null,null,null);
+                    }else{
+                        findPoints(searchContent,null,null,null);
+                    }
+                }else if(searchCondition.contains("点位名称")){
+                    String searchContent = et_search_content.getText().toString().trim();
+                    ToastUtil.show(getBaseContext(),searchContent);
+                    if(TextUtils.isEmpty(searchContent)){
+                        queryPoint(null,null,null,null,null,null);
+                    }else{
+                        findPoints(null,searchContent,null,null);
+                    }
+                }else if("设备类型".equals(searchCondition)){
+                    String searchContent = et_search_content.getText().toString().trim();
+                    if(TextUtils.isEmpty(searchContent)){
+                        queryPoint(null,null,null,null,null,null);
+                    }else{
+                        if(searchContent.contains("球")){
+                            findPoints(null,null,"0",null);
+                        }else if(searchContent.contains("枪")){
+                            findPoints(null,null,"1",null);
+                        }else{
+                            ToastUtil.show(getBaseContext(),"无此设备类型");
+                        }
+                    }
+                }else if("编号".equals(searchCondition)){
+                    String searchContent = et_search_content.getText().toString().trim();
+                    if(TextUtils.isEmpty(searchContent)){
+                        queryPoint(null,null,null,null,null,null);
+                    }else{
+                        findPoints(null,null,null,searchContent);
+                    }
                 }
+
+//                if(TextUtils.isEmpty(searchContent)){
+//                    /**查询条件为空，则查询所有*/
+////                    queryPoint(null,null,null,null,null,null);
+//                }else{
+////                    initGeoSearch(searchContent);
+////                    queryPointByArea(searchContent);
+//
+//                }
                 break;
             case R.id.tv_search_input:
                 showWheelView("输入区域",ListDate.POINT_AREA_LIST,tv_search_input);
@@ -637,7 +681,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.submit_all_saved_points:
                 List<ExplorePoint> points = DBUtil.findAllUnSubmitPoint();
                 if(points == null || points.size() == 0){
-                    Toast.makeText(getBaseContext(),"没有未提交点位数据",Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getBaseContext(),"没有未提交点位数据");
+                    drawerLayout.closeDrawer(Gravity.LEFT);
                     return;
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -645,6 +690,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 builder.setPositiveButton("提交", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        drawerLayout.closeDrawer(Gravity.LEFT);
                         startService(new Intent(MainActivity.this, SubmitPointsService.class));
                     }
                 });
@@ -656,8 +702,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 builder.create().show();
                 break;
+            case R.id.tv_search_condition:
+                showSearchConditionPopwindow(tv_search_condition);
+                break;
+            case R.id.btn_switch_user:
+                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                this.finish();
+                break;
         }
     }
+    PopupWindow searchConditionPopwindow = null;
+    View contentView;
+    public void showSearchConditionPopwindow(View parent){
+        if(contentView == null){
+            contentView = getLayoutInflater().inflate(R.layout.search_condition_popwindow,null);
+        }
+        if(searchConditionPopwindow == null){
+            searchConditionPopwindow = new PopupWindow(contentView,
+                    parent.getLayoutParams().width, LinearLayout.LayoutParams.WRAP_CONTENT,true);
+            searchConditionPopwindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.search_condation_popwindow_style));
+        }
+        searchConditionPopwindow.showAsDropDown(parent);
+
+        final TextView tvArea = (TextView) contentView.findViewById(R.id.tvArea);
+        final TextView tvName = (TextView) contentView.findViewById(R.id.tvName);
+        final TextView tvType = (TextView) contentView.findViewById(R.id.tvType);
+        final TextView tvNum = (TextView) contentView.findViewById(R.id.tvNum);
+
+        tvArea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv_search_condition.setText(tvArea.getText());
+                tv_search_input.setText(StaticValues.EMPTY_VALUE);
+                hideSearchConditionPopwindow();
+                tv_search_input.setVisibility(View.VISIBLE);
+                et_search_content.setVisibility(View.GONE);
+            }
+        });
+        tvName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv_search_condition.setText(tvName.getText());
+                hideSearchConditionPopwindow();
+                tv_search_input.setVisibility(View.GONE);
+                et_search_content.setVisibility(View.VISIBLE);
+            }
+        });
+        tvType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv_search_condition.setText(tvType.getText());
+                hideSearchConditionPopwindow();
+                tv_search_input.setVisibility(View.GONE);
+                et_search_content.setVisibility(View.VISIBLE);
+            }
+        });
+        tvNum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv_search_condition.setText(tvNum.getText());
+                hideSearchConditionPopwindow();
+                tv_search_input.setVisibility(View.GONE);
+                et_search_content.setVisibility(View.VISIBLE);
+            }
+        });
+
+    }
+    public void hideSearchConditionPopwindow(){
+        if(searchConditionPopwindow != null && searchConditionPopwindow.isShowing()){
+            searchConditionPopwindow.dismiss();
+        }
+    }
+
     public void queryPoint(String lat ,String lon,String topLeft,String topRight,String bottomLeft,String bottomRight){
         if(!TextUtils.isEmpty(lat) && !TextUtils.isEmpty(lon)){
             aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
@@ -667,12 +783,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-//        LatLng centerLatlng = aMap.getProjection().fromScreenLocation(new Point(width/2,height/2));
         LatLng leftTop = aMap.getProjection().fromScreenLocation(new Point(0,0));
         LatLng rightBottom = aMap.getProjection().fromScreenLocation(new Point(width,height));
         OkHttpUtils.post()
                 .url(StaticValues.ACTION_QUERY_POINT)
-                .addParams(PointParams.PHONE,TextUtils.isEmpty(SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE))?"":SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE))
+                .addParams(PointParams.USER_ID,TextUtils.isEmpty(BaseInfo.USER_ID)?"":BaseInfo.USER_ID)
                 .addParams(PointParams.LAT,TextUtils.isEmpty(lat)?"":lat)
                 .addParams(PointParams.LON,TextUtils.isEmpty(lon)?"":lon)
                 .addParams("topLat",TextUtils.isEmpty(String.valueOf(leftTop.latitude))?"":String.valueOf(leftTop.latitude))
@@ -683,7 +798,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        Toast.makeText(getBaseContext(),"服务器异常",Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getBaseContext(),"服务器异常");
                     }
                     @Override
                     public void onResponse(String response, int id) {
@@ -694,6 +809,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(points.length > 1){
                                 aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(Double.valueOf(points[0].lat),Double.valueOf(points[0].lon)), 12));
+                            }else{
+
                             }
                             for(ExplorePoint point : points){
                                 MarkerOptions options = new MarkerOptions();
@@ -702,27 +819,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 options.position(new LatLng(point.lat,point.lon));
                                 if(point.camera_type.equals("0")){
                                     if(point.explore_status.equals("0")){
-                                        //初堪
+                                        //初勘
                                         options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_dome_edit)));
                                     }else{
-                                        //复堪
+                                        //复勘
                                         options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_dome)));
                                     }
                                 }else if(point.camera_type.equals("1")){
                                     if(point.explore_status.equals("0")){
-                                        //初堪
+                                        //初勘
                                         options.icon( BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_blot_edit)));
                                     }else{
-                                        //复堪
+                                        //复勘
                                         options.icon( BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_blot)));
                                     }
                                 }
                                 Marker marker = aMap.addMarker(options);
                             }
+
                         }else if(resp.code == 1001){
-                            Toast.makeText(getBaseContext(),"参数为空",Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(getBaseContext(),"参数为空");
                         }else {
-                            Toast.makeText(getBaseContext(),"没有查询到数据",Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(getBaseContext(),"没有查询到数据");
                         }
                     }
                 });
@@ -732,13 +850,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         OkHttpUtils.post()
                 .url(StaticValues.ACTION_QUREY_POINT_AREA_BY_LIST)
-                .addParams(PointParams.PHONE,TextUtils.isEmpty(SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE))?"":SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE))
+                .addParams(PointParams.USER_ID,TextUtils.isEmpty(BaseInfo.USER_ID)?"":BaseInfo.USER_ID)
                 .addParams(PointParams.PAREAID,ListDate.POINT_AREA_HASHMAP.get(area))
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        Toast.makeText(getBaseContext(),"服务器异常",Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getBaseContext(),"服务器异常");
                     }
                     @Override
                     public void onResponse(String response, int id) {
@@ -749,6 +867,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if(points.length > 1){
                                 aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(Double.valueOf(points[0].lat),Double.valueOf(points[0].lon)), 12));
+                            }else{
+                                ToastUtil.show(getBaseContext(),"没有查询结果");
                             }
                             for(ExplorePoint point : points){
                                 MarkerOptions options = new MarkerOptions();
@@ -757,27 +877,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 options.position(new LatLng(point.lat,point.lon));
                                 if(point.camera_type.equals("0")){
                                     if(point.explore_status.equals("0")){
-                                        //初堪
+                                        //初勘
                                         options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_dome_edit)));
                                     }else{
-                                        //复堪
+                                        //复勘
                                         options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_dome)));
                                     }
                                 }else if(point.camera_type.equals("1")){
                                     if(point.explore_status.equals("0")){
-                                        //初堪
+                                        //初勘
                                         options.icon( BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_blot_edit)));
                                     }else{
-                                        //复堪
+                                        //复勘
                                         options.icon( BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_blot)));
                                     }
                                 }
                                 Marker marker = aMap.addMarker(options);
                             }
                         }else if(resp.code == 1001){
-                            Toast.makeText(getBaseContext(),"参数为空",Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(getBaseContext(),"参数为空");
                         }else {
-                            Toast.makeText(getBaseContext(),"没有查询到数据",Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(getBaseContext(),"没有查询到数据");
                         }
                     }
                 });
@@ -819,6 +939,67 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 })
                 .playOn(findViewById(R.id.linear));
+    }
+
+    public void findPoints(String area,String pname,String cameraType,String pnum){
+        OkHttpUtils.post()
+                .url(StaticValues.ACTION_FIND_POINT)
+                .addParams(PointParams.USER_ID,TextUtils.isEmpty(BaseInfo.USER_ID)?"":BaseInfo.USER_ID)
+                .addParams(PointParams.PAREAID,TextUtils.isEmpty(ListDate.POINT_AREA_HASHMAP.get(area))?"":ListDate.POINT_AREA_HASHMAP.get(area))
+                .addParams(PointParams.PNAME,TextUtils.isEmpty(pname)?"":pname)
+                .addParams(PointParams.CAMERA_TYPE,TextUtils.isEmpty(cameraType)?"":cameraType)
+                .addParams(PointParams.PNUM,TextUtils.isEmpty(pnum)?"":pnum)
+                .addParams(PointParams.PAGE,"1")
+                .addParams(PointParams.ROWS,"0")
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        ToastUtil.show(getBaseContext(),"服务器异常");
+                    }
+                    @Override
+                    public void onResponse(String response, int id) {
+                        QueryPointResp resp = new Gson().fromJson(response,QueryPointResp.class);
+                        if(resp.code == 1000){
+                            aMap.clear();
+                            ExplorePoint[] points = resp.points;
+                            if(points.length > 1){
+                                aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                        new LatLng(Double.valueOf(points[0].lat),Double.valueOf(points[0].lon)), 12));
+                            }else{
+                                ToastUtil.show(getBaseContext(),"没有查询结果");
+                            }
+                            for(ExplorePoint point : points){
+                                MarkerOptions options = new MarkerOptions();
+                                options.draggable(false);
+                                options.title(point.pname);
+                                options.position(new LatLng(point.lat,point.lon));
+                                if(point.camera_type.equals("0")){
+                                    if(point.explore_status.equals("0")){
+                                        //初勘
+                                        options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_dome_edit)));
+                                    }else{
+                                        //复勘
+                                        options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_dome)));
+                                    }
+                                }else if(point.camera_type.equals("1")){
+                                    if(point.explore_status.equals("0")){
+                                        //初勘
+                                        options.icon( BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_blot_edit)));
+                                    }else{
+                                        //复勘
+                                        options.icon( BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.map_blot)));
+                                    }
+                                }
+                                Marker marker = aMap.addMarker(options);
+                            }
+                        }else if(resp.code == 1001){
+                            ToastUtil.show(getBaseContext(),"参数为空");
+                        }else {
+                            ToastUtil.show(getBaseContext(),"没有查询到数据");
+                        }
+                    }
+                });
     }
 
     public void showFAB(){
@@ -874,14 +1055,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         emptyView =root.findViewById(R.id.empty_view);
         listView = (XListView) root.findViewById(R.id.date_query_listview);
         switch_view = (TextView) root.findViewById(R.id.switch_view);
+        LinearLayout linearSwicth = (LinearLayout) root.findViewById(R.id.linear_switch);
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         dateQueryWindow = new PopupWindow(root,(dm.widthPixels / 10) * 8 , (dm.heightPixels / 10) * 7,true);
         dateQueryWindow.setTouchable(true);
         dateQueryWindow.setOutsideTouchable(false);
-        dateQueryWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.search_edittext_style));
+        dateQueryWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.date_query_pop_window_bg_style));
         dateQueryWindow.showAtLocation(menu,Gravity.CENTER,0,0);
-
+        YoYo.with(Techniques.ZoomInDown)
+                .duration(400)
+                .playOn(root);
         pointLists = new ArrayList<>();
         pointLists = DBUtil.getPointByPage(0,StaticValues.QUERY_DATE_PAGE_SIZE,StaticValues.UN_SUBMIT_POINT);
         adapter = new DateQueryAdapter(this,pointLists,getLayoutInflater(),aMap,dateQueryWindow);
@@ -890,10 +1074,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listView.setAdapter(adapter);
         listView.setEmptyView(emptyView);
         loadMoreTask(StaticValues.UN_SUBMIT_POINT);
-        switch_view.setOnClickListener(new View.OnClickListener() {
+        linearSwicth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(switch_view.getText().equals("未提交")){
+                    ObjectAnimator oa = ObjectAnimator.ofFloat(switch_view, "translationX", switch_view.getTranslationX(),switch_view.getTranslationX() +switch_view.getWidth());
+                    oa.setDuration(400);
+                    oa.start();
                     switch_view.setText("已提交");
                     pointLists = null;
                     pointLists = DBUtil.getPointByPage(0,StaticValues.QUERY_DATE_PAGE_SIZE,StaticValues.SUBMITED_POINT);
@@ -903,6 +1090,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     listView.setPullLoadEnable(true);
                     loadMoreTask(StaticValues.SUBMITED_POINT);
                 }else{
+                    ObjectAnimator oa = ObjectAnimator.ofFloat(switch_view, "translationX", switch_view.getTranslationX(),switch_view.getTranslationX() -switch_view.getWidth());
+                    oa.setDuration(400);
+                    oa.start();
                     switch_view.setText("未提交");
                     pointLists = null;
                     pointLists = DBUtil.getPointByPage(0,StaticValues.QUERY_DATE_PAGE_SIZE,StaticValues.UN_SUBMIT_POINT);
@@ -920,8 +1110,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent it = new Intent(MainActivity.this,InitPointInfoActivity.class);
                 it.putExtra("point",pointLists.get(i-1));
                 startActivity(it);
+                hideDateQueryWindow();
             }
         });
+
 
     }
     public void hideDateQueryWindow(){
@@ -932,20 +1124,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     long currentTime = 0;
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()){
-            case MotionEvent.BUTTON_BACK:
-                if(System.currentTimeMillis() - currentTime > 2000){
-                    currentTime = System.currentTimeMillis();
-                    Toast.makeText(getBaseContext(),"再按一次退出",Toast.LENGTH_SHORT).show();
-                }else{
-                    this.finish();
-                    return true;
-                }
-                break;
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (System.currentTimeMillis() - currentTime > 2000) {
+                currentTime = System.currentTimeMillis();
+                ToastUtil.show(this,"再按一次退出");
+            } else {
+                this.finish();
+            }
+            return true;
         }
-
-        return super.onTouchEvent(event);
+        return super.onKeyDown(keyCode, event);
     }
 
     public void loadMoreTask(final int submitStatus)
@@ -965,7 +1154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     pointLists.addAll(points);
                     adapter.notifyDataSetChanged();
                 }else {
-                    Toast.makeText(getBaseContext(), "没有更多数据", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getBaseContext(), "没有更多数据");
                     listView.setPullLoadEnable(false);
                 }
                 listView.stopLoadMore();

@@ -40,11 +40,11 @@ public class SPUtil {
     }
     public static void putLoginedPhone(Context context,String value){
         boolean exist = false;
-        if(TextUtils.isEmpty(getSP(context).getString(StaticValues.LOGINED_PHONE,null))){
-            put(context,StaticValues.LOGINED_PHONE,value);
+        if(TextUtils.isEmpty(getSP(context).getString(StaticValues.LOGINED_USER,null))){
+            put(context,StaticValues.LOGINED_USER,value);
         }else{
-            if(getSP(context).getString(StaticValues.LOGINED_PHONE,null).contains(StaticValues.SPLIT)){
-                String[] array = getSP(context).getString(StaticValues.LOGINED_PHONE,null).split(StaticValues.SPLIT);
+            if(getSP(context).getString(StaticValues.LOGINED_USER,null).contains(StaticValues.SPLIT)){
+                String[] array = getSP(context).getString(StaticValues.LOGINED_USER,null).split(StaticValues.SPLIT);
                 for(String s : array){
                     if(value.equals(s)){
                         exist = true;
@@ -52,14 +52,14 @@ public class SPUtil {
                     }
                 }
                 if(!exist){
-                    put(context,StaticValues.LOGINED_PHONE,getSP(context).getString(StaticValues.LOGINED_PHONE,null) + StaticValues.SPLIT + value);
+                    put(context,StaticValues.LOGINED_USER,getSP(context).getString(StaticValues.LOGINED_USER,null) + StaticValues.SPLIT + value);
                 }
             }else{
-                if(value.equals(getSP(context).getString(StaticValues.LOGINED_PHONE,null))){
+                if(value.equals(getSP(context).getString(StaticValues.LOGINED_USER,null))){
                     return;
                 }
-                String res = getSP(context).getString(StaticValues.LOGINED_PHONE,null) + StaticValues.SPLIT + value;
-                put(context,StaticValues.LOGINED_PHONE,res);
+                String res = getSP(context).getString(StaticValues.LOGINED_USER,null) + StaticValues.SPLIT + value;
+                put(context,StaticValues.LOGINED_USER,res);
             }
         }
     }

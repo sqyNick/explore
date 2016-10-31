@@ -7,4 +7,6 @@ package com.fhzz.cn.exploremap.entity;
 public class PointAreaResp {
     public String id;
     public String areaName;
+    public String level;
+    public String parent_id;
 }

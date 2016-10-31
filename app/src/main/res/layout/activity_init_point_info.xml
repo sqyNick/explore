@@ -10,6 +10,7 @@
         layout="@layout/header"
         android:layout_width="match_parent"
         android:layout_height="48dp" />
+
     <ScrollView
         android:layout_weight="1"
         android:layout_width="match_parent"
@@ -76,6 +77,10 @@
                 android:layout_height="wrap_content" />
             <include
                 layout="@layout/layout_explore_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <include
+                layout="@layout/layout_submit_person"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <include

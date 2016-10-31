@@ -6,6 +6,7 @@ package com.fhzz.cn.exploremap.value;
 
 public interface PointParams {
     String PAREA = "point_area_id";
+    String POINT_ID = "point_id";
     String PNAME = "pname";
     String PNUM = "pnum";
     String CAMERA_TYPE = "camera_type";
@@ -25,8 +26,12 @@ public interface PointParams {
     String EXPLORE_STATUS = "explore_status";
     String LAT = "lat";
     String LON = "lon";
-    String PHONE = "user_name";
+    String SURVEY_PEOPLE = "survey_people";
+    String USER_NAME = "user_name";
     String PSD = "psd";
     String PAREAID = "pareaId";
-
+    String USER_ID = "userId";
+    String PAGE = "page";
+    String ROWS = "rows";
+    String EXPLORE_DATE = "explore_date";
 }

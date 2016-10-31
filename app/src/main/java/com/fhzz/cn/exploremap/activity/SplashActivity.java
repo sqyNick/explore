@@ -12,6 +12,8 @@ import com.fhzz.cn.exploremap.R;
 import com.fhzz.cn.exploremap.entity.ResultCodeResp;
 import com.fhzz.cn.exploremap.util.LogUtil;
 import com.fhzz.cn.exploremap.util.SPUtil;
+import com.fhzz.cn.exploremap.util.ToastUtil;
+import com.fhzz.cn.exploremap.value.BaseInfo;
 import com.fhzz.cn.exploremap.value.PointParams;
 import com.fhzz.cn.exploremap.value.StaticValues;
 import com.google.gson.Gson;
@@ -50,15 +52,14 @@ public class SplashActivity extends AppCompatActivity {
         handler.postDelayed(r, StaticValues.SPLASH_TIME);
     }
     public void LogRequest(){
-        String lastLoginedPhone = SPUtil.getString(this,StaticValues.LAST_LOGINED_PHONE);
+        String lastLoginedUser = SPUtil.getString(this,StaticValues.LAST_LOGINED_USER);
         String lastLoginedPsd = SPUtil.getString(this,StaticValues.LAST_LOGINED_PSD);
-        if(TextUtils.isEmpty(lastLoginedPhone) ||  TextUtils.isEmpty(lastLoginedPsd)){
+        if(TextUtils.isEmpty(lastLoginedUser) ||  TextUtils.isEmpty(lastLoginedPsd)){
             startActivity(new Intent(SplashActivity.this,LoginActivity.class));
             SplashActivity.this.finish();
         }else{
-            LogUtil.d("TAG","lastLoginedPhone ----  " +lastLoginedPhone);
             OkHttpUtils.get()
-                    .addParams(PointParams.PHONE,lastLoginedPhone.trim())
+                    .addParams(PointParams.USER_NAME,lastLoginedUser.trim())
                     .addParams(PointParams.PSD,lastLoginedPsd)
                     .url(StaticValues.ACTION_LOGIN)
                     .build()
@@ -75,9 +76,10 @@ public class SplashActivity extends AppCompatActivity {
                             ResultCodeResp resp = new Gson().fromJson(response,ResultCodeResp.class);
                             if(resp.code == 1000){
                                 startActivity(new Intent(SplashActivity.this,MainActivity.class));
+                                BaseInfo.USER_ID = resp.message;
                                 SplashActivity.this.finish();
                             }else{
-                                Toast.makeText(getBaseContext(),"登录失败",Toast.LENGTH_SHORT).show();
+                                ToastUtil.show(getBaseContext(),"登录失败");
                                 startActivity(new Intent(SplashActivity.this,LoginActivity.class));
                                 SplashActivity.this.finish();
                             }

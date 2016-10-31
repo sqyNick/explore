@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/linear_explore_date"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/login_linear_layout_shape"
@@ -18,6 +19,7 @@
             android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/tv_date"
             android:hint="系统自动生成"
             android:layout_width="0dp"
             android:layout_weight="1"

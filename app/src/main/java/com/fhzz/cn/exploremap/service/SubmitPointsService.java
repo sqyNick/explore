@@ -17,6 +17,7 @@ import com.fhzz.cn.exploremap.dbbean.ExplorePoint;
 import com.fhzz.cn.exploremap.entity.ResultCodeResp;
 import com.fhzz.cn.exploremap.util.DBUtil;
 import com.fhzz.cn.exploremap.util.SPUtil;
+import com.fhzz.cn.exploremap.value.BaseInfo;
 import com.fhzz.cn.exploremap.value.ListDate;
 import com.fhzz.cn.exploremap.value.PointParams;
 import com.fhzz.cn.exploremap.value.StaticValues;
@@ -94,6 +95,7 @@ public class SubmitPointsService extends Service {
     public void submit(final ExplorePoint p){
         PostFormBuilder formBuilder = OkHttpUtils.post()
                 .url(StaticValues.ACTION_MODIFY_POINT)
+                .addParams(PointParams.POINT_ID,TextUtils.isEmpty(p.point_id)?"":p.point_id)
                 .addParams(PointParams.PAREA,TextUtils.isEmpty(p.parea)? "": ListDate.POINT_AREA_HASHMAP.get(p.parea))
                 .addParams(PointParams.PNAME,TextUtils.isEmpty(p.pname)?"":p.pname)
                 .addParams(PointParams.PNUM,TextUtils.isEmpty(p.pnum)?"":p.pnum)
@@ -111,7 +113,9 @@ public class SubmitPointsService extends Service {
                 .addParams(PointParams.EXPLORE_STATUS,TextUtils.isEmpty(p.explore_status)?"":p.explore_status)
                 .addParams(PointParams.LAT,String.valueOf(p.lat))
                 .addParams(PointParams.LON,String.valueOf(p.lon))
-                .addParams(PointParams.PHONE, TextUtils.isEmpty(SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE))?"":SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE));
+                .addParams(PointParams.EXPLORE_DATE,TextUtils.isEmpty(p.explore_date)?"":p.explore_date)
+                .addParams(PointParams.USER_ID,TextUtils.isEmpty(BaseInfo.USER_ID)?"":BaseInfo.USER_ID)
+                .addParams(PointParams.SURVEY_PEOPLE, TextUtils.isEmpty(p.submit_person)?"":p.submit_person);
         if(!TextUtils.isEmpty(p.point_map)){
             formBuilder.addFile(PointParams.POINT_MAP,new File(p.point_map).getName(),new File(p.point_map));
         }
@@ -134,6 +138,7 @@ public class SubmitPointsService extends Service {
                         ResultCodeResp resp = new Gson().fromJson(response,ResultCodeResp.class);
                         if(resp.code == 1000){
                             p.point_id = resp.message;
+                            p.is_submite = 1;
                             DBUtil.changeSubmit(p.id,1);
                             if(DBUtil.savePoint(p)){
                                 submitSuccess++;

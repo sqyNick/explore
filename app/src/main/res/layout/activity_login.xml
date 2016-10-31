@@ -5,36 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.fhzz.cn.exploremap.activity.LoginActivity">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/blue"
+        android:textColor="@color/white"
+        android:text="登  录"
+        android:textSize="20sp"
+        android:gravity="center"
+        />
 
     <LinearLayout
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="60dp"
         android:orientation="vertical">
 
         <LinearLayout
+            android:background="@drawable/linear_login_msg_style"
             android:id="@+id/login_linear_layout"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="center"
-            android:background="@drawable/login_linear_layout_shape"
             android:orientation="horizontal"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:weightSum="10">
+            <TextView
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="账号:"
+                android:gravity="center"
+                android:textColor="@color/blue"
+                />
 
             <EditText
-                android:id="@+id/et_phone_number"
+                android:paddingLeft="5dp"
+                android:textColor="@color/white"
+                android:id="@+id/et_user_name"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="8"
-                android:background="@drawable/login_edit_shape"
-                android:hint="用户名"
+                android:background="@drawable/login_edit_bg_style"
                 />
 
             <ImageView
@@ -42,8 +60,8 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:padding="6dp"
-                android:src="@mipmap/delete_32"
+                android:padding="8dp"
+                android:src="@mipmap/clear_all"
                 android:visibility="invisible" />
 
             <ImageView
@@ -51,30 +69,31 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:padding="6dp"
-                android:src="@mipmap/drop_down_32" />
+                android:padding="8dp"
+                android:src="@mipmap/jiantou" />
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="center"
-            android:background="@drawable/login_linear_layout_shape"
+            android:background="@drawable/linear_login_msg_style"
             android:orientation="horizontal"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:weightSum="10">
-
             <EditText
-                android:hint="密码"
+                android:textColor="@color/white"
+                android:textColorHint="@color/blue"
+                android:textSize="15sp"
+                android:hint="密码:"
                 android:id="@+id/et_psd"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="10"
-                android:background="@drawable/login_edit_shape"
+                android:background="@drawable/login_edit_bg_style"
                 android:inputType="textPassword" />
-
-
         </LinearLayout>
 
         <LinearLayout
@@ -84,7 +103,6 @@
             android:layout_marginTop="15dp"
             android:orientation="horizontal"
             android:weightSum="10">
-
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
@@ -94,8 +112,15 @@
                 android:text="登录"
                 android:textColor="#fff"
                 android:textSize="20sp" />
-
         </LinearLayout>
     </LinearLayout>
-
+    <ImageView
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:src="@mipmap/logo"
+        android:paddingLeft="80dp"
+        android:paddingRight="80dp"
+        />
 </RelativeLayout>

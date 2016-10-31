@@ -1,7 +1,5 @@
 package com.fhzz.cn.exploremap.value;
 
-import com.amap.api.maps.model.LatLng;
-
 /**
  * Created by Administrator on 2016/9/27.
  */
@@ -24,6 +22,7 @@ public interface StaticValues {
     String ACTION_QUERY_POINT = "http://" + SERVER + "/queryPoint.do";
     String ACTION_QUREY_POINT_AREA = "http://" + SERVER + "/queryPointArea.do";
     String ACTION_QUREY_POINT_AREA_BY_LIST = "http://" + SERVER + "/queryPointByAreaList.do";
+    String ACTION_FIND_POINT = "http://" + SERVER + "/pointListByMobil.do";
 
     /**服务器配置结束*/
 
@@ -46,13 +45,13 @@ public interface StaticValues {
     String EMPTY_VALUE = "";
     /**分隔符*/
     String SPLIT = ",";
-    /**成功登录过的手机号*/
-    String LOGINED_PHONE = "LOGINED_PHONE";
+    /**成功登录过的账号*/
+    String LOGINED_USER = "LOGINED_USER";
     /**上次登录的账号*/
-    String LAST_LOGINED_PHONE = "LAST_LOGINED_PHONE";
+    String LAST_LOGINED_USER = "LAST_LOGINED_USER";
     String LAST_LOGINED_PSD = "LAST_LOGINED_PSD";
     /**现在登录的账号*/
-    String NOW_LOGIN_PHONE = "NOW_LOGIN_PHONE";
+    String NOW_LOGIN_USER = "NOW_LOGIN_USER";
     /**http请求超时时长*/
     long CONNECT_TIME_OUT = 6000L;
     /**http请求读取时长*/

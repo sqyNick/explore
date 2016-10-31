@@ -30,6 +30,8 @@ import com.fhzz.cn.exploremap.entity.ResultCodeResp;
 import com.fhzz.cn.exploremap.util.DBUtil;
 import com.fhzz.cn.exploremap.util.LogUtil;
 import com.fhzz.cn.exploremap.util.SPUtil;
+import com.fhzz.cn.exploremap.util.ToastUtil;
+import com.fhzz.cn.exploremap.value.BaseInfo;
 import com.fhzz.cn.exploremap.value.ListDate;
 import com.fhzz.cn.exploremap.value.PointParams;
 import com.fhzz.cn.exploremap.value.StaticValues;
@@ -120,7 +122,7 @@ public class DateQueryAdapter extends BaseAdapter {
         holder.item_img_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                ToastUtil.show(mContext,"无权限");
             }
         });
     }
@@ -162,7 +164,6 @@ public class DateQueryAdapter extends BaseAdapter {
         options.draggable(false);
         options.title(point.pname);
         options.position(new LatLng(point.lat,point.lon));
-        LogUtil.d("adapter " + point.camera_type);
         if(("0").equals(point.camera_type)){
             if(("0").equals(point.explore_status)){
                 //初堪
@@ -206,7 +207,8 @@ public class DateQueryAdapter extends BaseAdapter {
                 .addParams(PointParams.EXPLORE_STATUS,TextUtils.isEmpty(p.explore_status)?"":p.explore_status)
                 .addParams(PointParams.LAT,String.valueOf(p.lat))
                 .addParams(PointParams.LON,String.valueOf(p.lon))
-                .addParams(PointParams.PHONE, TextUtils.isEmpty(SPUtil.getString(mContext,StaticValues.NOW_LOGIN_PHONE))?"":SPUtil.getString(mContext,StaticValues.NOW_LOGIN_PHONE));
+                .addParams(PointParams.USER_ID,TextUtils.isEmpty(BaseInfo.USER_ID) ? "" : BaseInfo.USER_ID)
+                .addParams(PointParams.SURVEY_PEOPLE, TextUtils.isEmpty(p.submit_person)?"":p.submit_person);
         if(!TextUtils.isEmpty(p.point_map)){
             formBuilder.addFile(PointParams.POINT_MAP,new File(p.point_map).getName(),new File(p.point_map));
         }
@@ -229,7 +231,14 @@ public class DateQueryAdapter extends BaseAdapter {
                     public void onResponse(String response, int id) {
                         ResultCodeResp resp = new Gson().fromJson(response,ResultCodeResp.class);
                         if(resp.code == 1000){
+                            p.point_id = resp.message;
+                            p.is_submite = 1;
                            DBUtil.changeSubmit(p.id,1);
+                            if( DBUtil.savePoint(p)){
+                                ToastUtil.show(mContext,"上传成功，本地同步成功");
+                            }else{
+                                ToastUtil.show(mContext,"上传成功，本地同步失败");
+                            }
                         }else if(resp.code == 1004){
                             Toast.makeText(mContext,"添加失败,图片上传失败",Toast.LENGTH_SHORT).show();
                         }else{

@@ -4,18 +4,18 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Property;
 import android.view.Gravity;
 import android.view.View;
-import android.view.animation.AnimationSet;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,8 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.cunoraz.gifview.library.GifView;
 import com.daimajia.androidanimations.library.Techniques;
@@ -34,8 +32,9 @@ import com.fhzz.cn.exploremap.dbbean.ExplorePoint;
 import com.fhzz.cn.exploremap.entity.ResultCodeResp;
 import com.fhzz.cn.exploremap.util.DBUtil;
 import com.fhzz.cn.exploremap.util.LogUtil;
-import com.fhzz.cn.exploremap.util.SPUtil;
+import com.fhzz.cn.exploremap.util.ToastUtil;
 import com.fhzz.cn.exploremap.util.dpUtil;
+import com.fhzz.cn.exploremap.value.BaseInfo;
 import com.fhzz.cn.exploremap.value.ListDate;
 import com.fhzz.cn.exploremap.value.PhotoConstant;
 import com.fhzz.cn.exploremap.value.PointParams;
@@ -44,7 +43,6 @@ import com.fhzz.cn.exploremap.view.TargetView;
 import com.google.gson.Gson;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
-import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.squareup.picasso.Picasso;
@@ -52,15 +50,21 @@ import com.wx.wheelview.adapter.ArrayWheelAdapter;
 import com.wx.wheelview.widget.WheelView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.PostFormBuilder;
-import com.zhy.http.okhttp.callback.FileCallBack;
 import com.zhy.http.okhttp.callback.StringCallback;
-import com.zhy.http.okhttp.request.PostFormRequest;
-import com.zhy.http.okhttp.request.RequestCall;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import cn.aigestudio.datepicker.bizs.languages.DPLManager;
+import cn.aigestudio.datepicker.bizs.themes.DPBaseTheme;
+import cn.aigestudio.datepicker.bizs.themes.DPTManager;
+import cn.aigestudio.datepicker.bizs.themes.DPTheme;
+import cn.aigestudio.datepicker.cons.DPMode;
+import cn.aigestudio.datepicker.views.DatePicker;
 import okhttp3.Call;
 
 public class InitPointInfoActivity extends AppCompatActivity implements View.OnClickListener{
@@ -137,10 +141,19 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
     @ViewInject(R.id.et_remarks)
     EditText et_remarks;
 
+    @ViewInject(R.id.et_submit_person)
+    EditText et_submit_person;
+
     @ViewInject(R.id.linear_exc_env)
     LinearLayout linear_exc_env;
     @ViewInject(R.id.linear_power_access)
     LinearLayout linear_power_access;
+    @ViewInject(R.id.tv_date)
+    TextView tv_date;
+    @ViewInject(R.id.linear_explore_date)
+    LinearLayout linear_explore_date;
+
+
 
 
 
@@ -153,9 +166,58 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
     /**点位信息保存对象*/
     ExplorePoint point;
 
+    public void initCalendar(){
+        DPTManager.getInstance().initCalendar(new DPTheme() {
+            @Override
+            public int colorBG() {
+                return 0xffffff;
+            }
+
+            @Override
+            public int colorBGCircle() {
+                return getResources().getColor(R.color.datepickerCircle);
+            }
+
+            @Override
+            public int colorTitleBG() {
+                return getResources().getColor(R.color.blue);
+            }
+
+            @Override
+            public int colorTitle() {
+                return 0xffffffff;
+            }
+
+            @Override
+            public int colorToday() {
+                return getResources().getColor(R.color.blue);
+            }
+
+            @Override
+            public int colorG() {
+                return 0xff858585;
+            }
+
+            @Override
+            public int colorF() {
+                return 0xff858585;
+            }
+
+            @Override
+            public int colorWeekend() {
+                return 0xff858585;
+            }
+
+            @Override
+            public int colorHoliday() {
+                return 0xff00bcd4;
+            }
+        });
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initCalendar();
         setContentView(R.layout.activity_init_point_info);
         ViewUtils.inject(this);
         init();
@@ -188,13 +250,13 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
                     .into(img_point_map);
         }
         if(TextUtils.isEmpty(point.explore_status)){
-            tv_tg_btn.setText("初堪");
+            tv_tg_btn.setText("初勘");
             point.explore_status = String.valueOf(0);
         }else if(point.explore_status.equals("0")){
-            tv_tg_btn.setText("复堪");
+            tv_tg_btn.setText("复勘");
             point.explore_status = String.valueOf(0);
         }else if(point.explore_status.equals("1")){
-            tv_tg_btn.setText("复堪");
+            tv_tg_btn.setText("复勘");
             tv_tg_btn.setVisibility(View.GONE);
             point.explore_status = String.valueOf(1);
         }
@@ -233,6 +295,15 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
         if(point.is_submite == 1){
             btn_save.setVisibility(View.GONE);
         }
+
+        et_submit_person.setText(point.submit_person);
+
+        if(TextUtils.isEmpty(point.explore_date)){
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+            tv_date.setText(sf.format(new Date()));
+        }else{
+            tv_date.setText(point.explore_date);
+        }
     }
     public void initListener(){
         icon_camera_type.setOnClickListener(this);
@@ -251,6 +322,7 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
         btn_submit.setOnClickListener(this);
         linear_exc_env.setOnClickListener(this);
         linear_power_access.setOnClickListener(this);
+        linear_explore_date.setOnClickListener(this);
     }
 
     /**
@@ -371,11 +443,11 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
                 this.finish();
                 break;
             case R.id.tv_tg_btn:
-                if(tv_tg_btn.getText().toString().equals("初堪")){
-                    tv_tg_btn.setText("复堪");
+                if(tv_tg_btn.getText().toString().equals("初勘")){
+                    tv_tg_btn.setText("复勘");
                     point.explore_status = String.valueOf(1);
-                }else if(tv_tg_btn.getText().toString().equals("复堪")){
-                    tv_tg_btn.setText("初堪");
+                }else if(tv_tg_btn.getText().toString().equals("复勘")){
+                    tv_tg_btn.setText("初勘");
                     point.explore_status = String.valueOf(0);
                 }
                 break;
@@ -418,15 +490,35 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
             case R.id.btn_save:
                 initBasePointInfo();
                 if(DBUtil.savePoint(point)){
-                    Toast.makeText(getBaseContext(),"暂存成功",Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(this,"暂存成功");
                     InitPointInfoActivity.this.finish();
                 }else{
-                    Toast.makeText(getBaseContext(),"暂存失败",Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(this,"暂存失败");
                 }
                 break;
             case R.id.btn_submit:
                 initBasePointInfo();
                 submitePoint(point);
+                break;
+            case R.id.linear_explore_date:
+                final AlertDialog dialog = new AlertDialog.Builder(InitPointInfoActivity.this).create();
+                dialog.show();
+                DatePicker picker = new DatePicker(InitPointInfoActivity.this);
+                Calendar calendar = Calendar.getInstance();
+                picker.setDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1);
+                picker.setMode(DPMode.SINGLE);
+                picker.setOnDatePickedListener(new DatePicker.OnDatePickedListener() {
+                    @Override
+                    public void onDatePicked(String date) {
+                        tv_date.setText(date);
+                        point.explore_date = date;
+                        dialog.dismiss();
+                    }
+                });
+                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialog.getWindow().setContentView(picker, params);
+                dialog.getWindow().setGravity(Gravity.CENTER);
                 break;
         }
     }
@@ -438,13 +530,14 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
         point.minne_enviriment = tv_excavation_env.getText().toString().trim();
         point.charge_method = tv_power_access.getText().toString().trim();
         point.remarks = et_remarks.getText().toString().trim();
+        point.submit_person = et_submit_person.getText().toString().trim();
     }
     File file;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(data == null){
-            Toast.makeText(this,"获取图片失败",Toast.LENGTH_SHORT).show();
+            ToastUtil.show(this,"获取图片失败");
             return;
         }
         if(requestCode == PhotoConstant.CAPTURE_REQUEST_CODE){
@@ -467,7 +560,7 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
             }
             String path = data.getStringExtra(PhotoConstant.IMAGE_PATH);
             if(TextUtils.isEmpty(path)){
-                Toast.makeText(getBaseContext(),"路径为空,请重新拍照",Toast.LENGTH_SHORT).show();
+                ToastUtil.show(this,"路径为空,请重新拍照");
                 return;
             }
             file = new File(path);
@@ -508,9 +601,14 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
     }
 
     public void submitePoint(ExplorePoint p){
+        if(TextUtils.isEmpty(p.submit_person)){
+            ToastUtil.show(this,"勘测人不可为空");
+            return;
+        }
         showSubmitDialog();
          PostFormBuilder formBuilder = OkHttpUtils.post()
                 .url(StaticValues.ACTION_MODIFY_POINT)
+                .addParams(PointParams.POINT_ID,TextUtils.isEmpty(p.point_id)?"":p.point_id)
                 .addParams(PointParams.PAREA,TextUtils.isEmpty(p.parea)? "":ListDate.POINT_AREA_HASHMAP.get(p.parea))
                 .addParams(PointParams.PNAME,TextUtils.isEmpty(p.pname)?"":p.pname)
                 .addParams(PointParams.PNUM,TextUtils.isEmpty(p.pnum)?"":p.pnum)
@@ -528,7 +626,10 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
                 .addParams(PointParams.EXPLORE_STATUS,TextUtils.isEmpty(p.explore_status)?"":p.explore_status)
                 .addParams(PointParams.LAT,String.valueOf(p.lat))
                 .addParams(PointParams.LON,String.valueOf(p.lon))
-                .addParams(PointParams.PHONE, TextUtils.isEmpty(SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE))?"":SPUtil.getString(getBaseContext(),StaticValues.NOW_LOGIN_PHONE));
+                 .addParams(PointParams.EXPLORE_DATE,TextUtils.isEmpty(p.explore_date)?"":p.explore_date)
+                 .addParams(PointParams.USER_ID,TextUtils.isEmpty(BaseInfo.USER_ID)?"":BaseInfo.USER_ID)
+                .addParams(PointParams.SURVEY_PEOPLE, TextUtils.isEmpty(p.submit_person)?"":p.submit_person);
+
                 if(!TextUtils.isEmpty(p.point_map)){
                     formBuilder.addFile(PointParams.POINT_MAP,new File(p.point_map).getName(),new File(p.point_map));
                 }
@@ -542,9 +643,8 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        e.printStackTrace();
                         hideSubmitDialog();
-                        Toast.makeText(getBaseContext(),"in error",Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getBaseContext(),"服务器异常，上传失败");
                     }
 
                     @Override
@@ -553,13 +653,16 @@ public class InitPointInfoActivity extends AppCompatActivity implements View.OnC
                         if(resp.code == 1000){
                             point.point_id = resp.message;
                             point.is_submite = 1;
-                            if(DBUtil.savePoint(point)){
-                                Toast.makeText(getBaseContext(),"本地保存成功",Toast.LENGTH_SHORT).show();
+                            DBUtil.changeSubmit(point.id,1);
+                            if( DBUtil.savePoint(point)){
+                                ToastUtil.show(getBaseContext(),"上传成功，本地同步成功");
+                            }else{
+                                ToastUtil.show(getBaseContext(),"上传成功，本地同步失败");
                             }
                         }else if(resp.code == 1004){
-                            Toast.makeText(getBaseContext(),"添加失败,图片上传失败",Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(getBaseContext(),"添加失败,图片上传失败");
                         }else{
-                            Toast.makeText(getBaseContext(),"添加失败",Toast.LENGTH_SHORT).show();
+                            ToastUtil.show(getBaseContext(),"添加失败");
                         }
                         hideSubmitDialog();
                     }

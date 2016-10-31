@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/swipe"
+    android:background="@drawable/item_date_query_style"
     android:layout_width="match_parent"
     android:layout_height="60dp">
     <!-- Bottom View Start-->
@@ -8,7 +10,6 @@
         android:id="@+id/bottom_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="#fff"
         android:orientation="horizontal"
         >
         <!--What you want to show-->
@@ -18,7 +19,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@mipmap/icon_show"
-             />
+            />
 
         <ImageView
             android:id="@+id/item_img_submit"
@@ -41,7 +42,6 @@
         android:id="@+id/linear_surface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
         android:orientation="vertical"
         >
         <!--What you want to show in SurfaceView-->
@@ -81,6 +81,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 />
+
             <TextView
                 android:text="安装方式"
                 android:id="@+id/item_tv_p_install_method"

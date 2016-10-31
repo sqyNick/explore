@@ -25,6 +25,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support:design:24.0.0'
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile files('libs/AMap_3DMap_V3.4.0_20160809.jar')
     compile files('libs/AMap_Location_V2.4.1_20160414.jar')
@@ -48,4 +49,5 @@ dependencies {
 
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
     compile 'com.github.Cutta:GifView:1.1'
+    compile 'cn.aigestudio.datepicker:DatePicker:2.2.0'
 }

@@ -9,6 +9,11 @@
     <color name="textColor">#474747</color>
     <color name="grayBackground">#eae9e9</color>
     <color name="searchLinear">#dde3e3e3</color>
-    <color name="transparent">#00000000</color>
+    <color name="halftransparent">#33000000</color>
     <color name="lightBlue">#7fb6e5</color>
+    <color name="transparent">#00000000</color>
+
+
+    <color name="datepickerCircle">#4400bcd4</color>
+
 </resources>

@@ -2,41 +2,54 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/date_query_pop_window_bg_style"
+    android:background="@drawable/date_query_content_style"
+    android:elevation="10dp"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/date_query_layout_bg_style"
         android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:gravity="center"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/switch_view"
-                android:text="未提交"
-                android:layout_width="96dp"
-                android:layout_height="48dp"
-                android:gravity="center" />
+            <LinearLayout
+                android:id="@+id/linear_switch"
+                android:background="@drawable/linear_login_msg_style"
+                android:layout_width="192dp"
+                android:layout_height="32dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:textColor="@color/white"
+                    android:background="@drawable/switch_tv_style"
+                    android:id="@+id/switch_view"
+                    android:layout_width="96dp"
+                    android:layout_height="32dp"
+                    android:gravity="center"
+                    android:text="未提交" />
+            </LinearLayout>
         </LinearLayout>
+
         <include
             android:id="@+id/empty_view"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
             layout="@layout/empty_view"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <com.fhzz.cn.exploremap.view.XListView
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/date_query_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/date_query_listview"
-            android:divider="@null"
+            android:divider="@color/transparent"
+            android:dividerHeight="3dp"
+            android:scrollbars="none"
             >
-            </com.fhzz.cn.exploremap.view.XListView>
+        </com.fhzz.cn.exploremap.view.XListView>
     </LinearLayout>
 
 </LinearLayout>

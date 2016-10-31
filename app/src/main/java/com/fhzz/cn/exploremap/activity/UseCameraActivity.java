@@ -32,17 +32,17 @@ public class UseCameraActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //判断 activity被销毁后 有没有数据被保存下来
-//        if (savedInstanceState != null) {
-//            mImageFilePath = savedInstanceState.getString("ImageFilePath");
-//            File mFile = new File(mImageFilePath);
-//            if (mFile.exists()) {
-//                Intent rsl = new Intent();
-//                rsl.putExtra(PhotoConstant.IMAGE_PATH, mImageFilePath);
-//                setResult(Activity.RESULT_OK, rsl);
-//                finish();
-//            } else {
-//            }
-//        }
+        if (savedInstanceState != null) {
+            mImageFilePath = savedInstanceState.getString("ImageFilePath");
+            File mFile = new File(mImageFilePath);
+            if (mFile.exists()) {
+                Intent rsl = new Intent();
+                rsl.putExtra(PhotoConstant.IMAGE_PATH, mImageFilePath);
+                setResult(Activity.RESULT_OK, rsl);
+                finish();
+            } else {
+            }
+        }
 
         mContext = this;
         if (savedInstanceState == null) {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ExploreMap</string>
+    <string name="app_name">勘点助手</string>
     <string name="open">open</string>
     <string name="close">close</string>
 
@@ -18,6 +18,8 @@
 
     <string name="submited">已提交</string>
     <string name="unsubmit">未提交</string>
+
+    <string name="search_condition_area">区域</string>
 
 
 </resources>
